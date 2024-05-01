@@ -1,21 +1,30 @@
 ﻿namespace Api.Controllers
 {
-  using Infrastructure;
+    using Api.Infrastructure.Services;
+    using DataRepository.Repositories;
+    using Infrastructure;
   using Microsoft.AspNetCore.Mvc;
   using Models;
 
   [ApiController]
   [Route("api")]
   public class OrderController : ControllerBase
-  {
-    [HttpGet]
-    [Route("order/{id}")]
-
-    public IEnumerable<Order> GetOrders(int id = 1)
     {
-      var data = new OrderService();
+        private IOrderService _orderService;
+        public OrderController(IOrderService orderService) {
+            this._orderService = orderService;
+        }
 
-      return data.GetOrdersForCompany(id);
+
+        [HttpGet]
+        [Route("order/{id}")]
+
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int id = 1)
+        {
+            var check = await _orderService.GetMyOrders();
+            var returnVal = await _orderService.GetOrdersForCompany(id);
+
+            return new OkObjectResult(returnVal);
+        }
     }
-  }
 }

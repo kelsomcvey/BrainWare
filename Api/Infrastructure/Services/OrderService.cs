@@ -1,26 +1,46 @@
-﻿namespace Api.Infrastructure
+﻿namespace Api.Infrastructure.Services
 {
     using System.Data;
+    using DataRepository.Repositories;
     using Models;
 
-    public class OrderService
+    public class OrderService :  IOrderService
     {
-        public List<Order> GetOrdersForCompany(int CompanyId)
+        private IBrainWareRepository brainwareRepository;
+
+        public OrderService(IBrainWareRepository brainwareRepository)
         {
+            this.brainwareRepository = brainwareRepository;
+        }
+
+        public async Task<List<Order>> GetMyOrders()
+        {
+            var sql = "SELECT c.name, o.description, o.order_id " +
+                "FROM company c " +
+                "INNER JOIN [order] o on c.company_id = o.company_id"; // Replace with your actual query
+            var orders = await brainwareRepository.GetOrders<Order>(sql); // Call the method
+            return orders.ToList(); // Convert IEnumerable to List (optional)
+        }
+
+        public async Task<List<Order>> GetOrdersForCompany(int CompanyId)
+        {
+
 
             var database = new Database();
 
             // Get the orders
             var sql1 =
-                "SELECT c.name, o.description, o.order_id FROM company c INNER JOIN [order] o on c.company_id=o.company_id";
+                "SELECT c.name, o.description, o.order_id " +
+                "FROM company c " +
+                "INNER JOIN [order] o on c.company_id=o.company_id";
 
-            var reader1 = database.ExecuteReader(sql1);
+            var reader1 = await database.ExecuteReader(sql1);
 
             var values = new List<Order>();
-            
+
             while (reader1.Read())
             {
-                var record1 = (IDataRecord) reader1;
+                var record1 = (IDataRecord)reader1;
 
                 values.Add(new Order()
                 {
@@ -36,9 +56,11 @@
 
             //Get the order products
             var sql2 =
-                "SELECT op.price, op.order_id, op.product_id, op.quantity, p.name, p.price FROM orderproduct op INNER JOIN product p on op.product_id=p.product_id";
+                "SELECT op.price, op.order_id, op.product_id, op.quantity, p.name, p.price " +
+                "FROM orderproduct op " +
+                "INNER JOIN product p on op.product_id=p.product_id";
 
-            var reader2 = database.ExecuteReader(sql2);
+            var reader2 = await database.ExecuteReader(sql2);
 
             var values2 = new List<OrderProduct>();
 
@@ -58,7 +80,7 @@
                         Price = record2.GetDecimal(5)
                     }
                 });
-             }
+            }
 
             reader2.Close();
 
@@ -70,7 +92,7 @@
                         continue;
 
                     order.OrderProducts.Add(orderproduct);
-                    order.OrderTotal = order.OrderTotal + (orderproduct.Price * orderproduct.Quantity);
+                    order.OrderTotal = order.OrderTotal + orderproduct.Price * orderproduct.Quantity;
                 }
             }
 
