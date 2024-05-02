@@ -21,10 +21,10 @@
 
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int id = 1)
         {
-            var check = await _orderService.GetMyOrders();
-            var returnVal = await _orderService.GetOrdersForCompany(id);
+            var check = await _orderService.GetOrdersWithProducts();
+          //  var returnVal = await _orderService.GetOrdersForCompany(id);
 
-            return new OkObjectResult(returnVal);
+            return new OkObjectResult(check);
         }
     }
 }

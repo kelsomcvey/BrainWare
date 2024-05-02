@@ -26,12 +26,18 @@ namespace Api
 
 
 
-            var connectionString = Configuration.GetConnectionString("BrainWareDb"); 
-
+           // var connectionString = Configuration.GetConnectionString("BrainWareDb");
             services.AddScoped<IBrainWareRepository, BrainWareRepository>(provider =>
             {
+                var configuration = provider.GetService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString("BrainWareDb");
                 return new BrainWareRepository(connectionString);
             });
+
+            //services.AddScoped<IBrainWareRepository, BrainWareRepository>(provider =>
+            //{
+            //    return new BrainWareRepository(connectionString);
+            //});
 
             services.AddScoped<IOrderService, OrderService>();
 
