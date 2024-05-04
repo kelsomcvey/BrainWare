@@ -67,6 +67,7 @@
     <Build Include="Tables\orderproduct.sql" />
     <Build Include="Stored Procedures\SPBW_GET_ORDER_PRODUCTS.sql" />
     <Build Include="Stored Procedures\SPBW_GET_COMPANY_ORDERS.sql" />
+    <Build Include="Stored Procedures\SPBW_GET_ALL_COMPANY_DETAILS.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProjectDB.refactorlog" />

@@ -13,6 +13,15 @@
             this.brainwareRepository = brainwareRepository;
         }
 
+        public async Task<List<Company>> GetCompanies()
+        {
+            var parameter = new { };
+            var storedProcedure = "[dbo].[SPBW_GET_ALL_COMPANY_DETAILS]";
+
+            var orderProducts = await brainwareRepository.ExecuteStoredProcedure<Company>(storedProcedure, parameter);
+            return orderProducts.ToList();
+        }
+
         private async Task<List<Order>> GetCompanyOrders(int companyId)
         {
             var parameter = new { CompanyId = companyId }; 
@@ -37,9 +46,9 @@
             }
         }
 
-        public async Task<List<Order>> GetOrdersWithProducts()
+        public async Task<List<Order>> GetOrdersWithProducts(int companyId)
         {
-            var orders = await GetCompanyOrders(1);
+            var orders = await GetCompanyOrders(companyId);
         
             foreach (var order in orders)
             {

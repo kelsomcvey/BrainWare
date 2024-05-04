@@ -1,0 +1,42 @@
+<div class="jumbotron">
+    <h1>BrainWare Orders</h1>
+    <p class="lead">This is the BrainWare orders page! Welcome</p>
+
+    <ng-container *ngIf="companies$ | async as companies">
+        <div class="row">
+            <div class="col-md-12">
+                <small>Select company from dropdown to view orders</small>
+
+
+            </div>
+        </div>
+        <div>
+            <select class="custom-select" [(ngModel)]="selectedCompanyId" (change)="this.onCompanySelected()">
+                <option *ngFor="let company of companies" [value]="company.companyId">{{ company.companyName }}</option>
+            </select>
+        </div>
+
+    </ng-container>
+</div>
+
+
+<bw-app-loader *ngIf="this.loading"></bw-app-loader>
+
+
+
+<div class="orders-container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{ companyDisplayName }} Orders</h3>
+        </div>
+    </div>
+
+    <ng-container *ngIf="orders$ | async as orders">
+        <div class="orders-list">
+            <div *ngFor="let order of orders">
+
+                <bw-app-order [order]="order"></bw-app-order>
+            </div>
+        </div>
+    </ng-container>
+</div>

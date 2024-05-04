@@ -1,0 +1,39 @@
+.custom-select {
+    display: inline-block;
+    width: 100%;
+    max-width: 300px; /* Adjust max-width as needed */
+    padding: 8px 12px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    appearance: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .custom-select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+
+  .orders-container {
+    margin-top: 20px;
+  }
+  
+  .orders-list {
+    max-height: 25vw; 
+    overflow-y: auto;
+  }
+
+ 
+  .order-container > div:nth-child(even) {
+    color: #eb6868; /* Even numbered elements */
+  }
+  
+  .order-container > div:nth-child(odd) {
+    color: #5e5a5a; /* Odd numbered elements */
+  }
