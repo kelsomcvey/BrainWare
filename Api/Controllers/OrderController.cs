@@ -17,25 +17,33 @@
 
         [HttpGet]
         [Route("order/companies")]
-
         public async Task<ActionResult<IEnumerable<Company>>> GetOrderCompanies()
         {
-            var comp = await _orderService.GetCompanies();            
-
-            return new OkObjectResult(comp);
+            try
+            {
+                var companies = await _orderService.GetCompanies();
+                return Ok(companies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
         }
-
 
         [HttpGet]
         [Route("order/{id}")]
-
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int id = 1)
         {
-           // var comp = await _orderService.GetCompanies();
-            var check = await _orderService.GetOrdersWithProducts(id);
-          //  var returnVal = await _orderService.GetOrdersForCompany(id);
-
-            return new OkObjectResult(check);
+            try
+            {
+                var orders = await _orderService.GetOrdersWithProducts(id);
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
         }
     }
+}
 }

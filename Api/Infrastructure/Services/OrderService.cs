@@ -1,62 +1,84 @@
-﻿namespace Api.Infrastructure.Services
-{
-    using System.Data;
-    using DataRepository.Repositories;
-    using Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Api.Models;
+using DataRepository.Repositories;
 
+
+namespace Api.Infrastructure.Services
+{
     public class OrderService : IOrderService
     {
-        private IBrainWareRepository brainwareRepository;
+        private readonly IBrainWareRepository _brainwareRepository;
 
         public OrderService(IBrainWareRepository brainwareRepository)
         {
-            this.brainwareRepository = brainwareRepository;
+            _brainwareRepository = brainwareRepository;
         }
 
         public async Task<List<Company>> GetCompanies()
         {
-            var parameter = new { };
+            var parameters = new { };
             var storedProcedure = "[dbo].[SPBW_GET_ALL_COMPANY_DETAILS]";
 
-            var orderProducts = await brainwareRepository.ExecuteStoredProcedure<Company>(storedProcedure, parameter);
-            return orderProducts.ToList();
+            try
+            {
+                var companies = await _brainwareRepository.ExecuteStoredProcedure<Company>(storedProcedure, parameters);
+                return companies.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error executing stored procedure: {ex.Message}");
+            }
         }
 
         private async Task<List<Order>> GetCompanyOrders(int companyId)
         {
-            var parameter = new { CompanyId = companyId }; 
+            var parameters = new { CompanyId = companyId };
             var storedProcedure = "[dbo].[SPBW_GET_COMPANY_ORDERS]";
 
-            var orderProducts = await brainwareRepository.ExecuteStoredProcedure<Order>(storedProcedure, parameter);
-            return orderProducts.ToList();
+            try
+            {
+                var orders = await _brainwareRepository.ExecuteStoredProcedure<Order>(storedProcedure, parameters);
+                return orders.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error executing stored procedure: {ex.Message}");
+            }
         }
 
         private async Task<List<OrderProduct>> GetOrderProducts(int orderId)
         {
-            var parameter = new { OrderId = orderId }; 
+            var parameters = new { OrderId = orderId };
             var storedProcedure = "[dbo].[SPBW_GET_ORDER_PRODUCTS]";
             try
             {
-                var orderProducts = await brainwareRepository.ExecuteStoredProcedure<OrderProduct>(storedProcedure, parameter);
+                var orderProducts = await _brainwareRepository.ExecuteStoredProcedure<OrderProduct>(storedProcedure, parameters);
                 return orderProducts.ToList();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                Console.WriteLine($"Error executing stored procedure: {ex.Message}");
-                return null;
+                throw new Exception($"Error executing stored procedure: {ex.Message}");
             }
         }
 
         public async Task<List<Order>> GetOrdersWithProducts(int companyId)
         {
-            var orders = await GetCompanyOrders(companyId);
-        
-            foreach (var order in orders)
+            try
             {
-               order.OrderProducts = await GetOrderProducts(order.OrderId);               
+                var orders = await GetCompanyOrders(companyId);
+
+                foreach (var order in orders)
+                {
+                    order.OrderProducts = await GetOrderProducts(order.OrderId);
+                }
+                return orders;
             }
-            return orders;
+            catch (Exception ex)
+            {
+                throw new Exception($"Error executing stored procedure: {ex.Message}");
+            }
         }
-
-
     }
 }
