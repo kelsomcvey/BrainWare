@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Api.Controllers;
 using Api.Models;
 using DataRepository.Repositories;
 
@@ -10,10 +11,12 @@ namespace Api.Infrastructure.Services
     public class OrderService : IOrderService
     {
         private readonly IBrainWareRepository _brainwareRepository;
+        ILogger<OrderService> _logger;
 
-        public OrderService(IBrainWareRepository brainwareRepository)
+        public OrderService(IBrainWareRepository brainwareRepository, ILogger<OrderService> logger)
         {
             _brainwareRepository = brainwareRepository;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<List<Company>> GetCompanies()
@@ -21,6 +24,7 @@ namespace Api.Infrastructure.Services
             var parameters = new { };
             var storedProcedure = "[dbo].[SPBW_GET_ALL_COMPANY_DETAILS]";
 
+            // SP should return companies with exisitng orders
             try
             {
                 var companies = await _brainwareRepository.ExecuteStoredProcedure<Company>(storedProcedure, parameters);
@@ -28,6 +32,7 @@ namespace Api.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error: {ex.Message}");
                 throw new Exception($"Error executing stored procedure: {ex.Message}");
             }
         }
@@ -36,7 +41,8 @@ namespace Api.Infrastructure.Services
         {
             var parameters = new { CompanyId = companyId };
             var storedProcedure = "[dbo].[SPBW_GET_COMPANY_ORDERS]";
-
+            
+            // sp takes in a param for CompanyId and SP returns all orders for company
             try
             {
                 var orders = await _brainwareRepository.ExecuteStoredProcedure<Order>(storedProcedure, parameters);
@@ -44,6 +50,7 @@ namespace Api.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error executing stored procedure: {ex.Message}");
                 throw new Exception($"Error executing stored procedure: {ex.Message}");
             }
         }
@@ -52,6 +59,8 @@ namespace Api.Infrastructure.Services
         {
             var parameters = new { OrderId = orderId };
             var storedProcedure = "[dbo].[SPBW_GET_ORDER_PRODUCTS]";
+
+            // sp takes in param for orderId and gets all products for that order
             try
             {
                 var orderProducts = await _brainwareRepository.ExecuteStoredProcedure<OrderProduct>(storedProcedure, parameters);
@@ -59,6 +68,7 @@ namespace Api.Infrastructure.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Error executing stored procedure: {ex.Message}");
                 throw new Exception($"Error executing stored procedure: {ex.Message}");
             }
         }
@@ -69,6 +79,8 @@ namespace Api.Infrastructure.Services
             {
                 var orders = await GetCompanyOrders(companyId);
 
+
+                // for each order get the products and add these to OrderProducts property
                 foreach (var order in orders)
                 {
                     order.OrderProducts = await GetOrderProducts(order.OrderId);
@@ -77,7 +89,8 @@ namespace Api.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error executing stored procedure: {ex.Message}");
+                _logger.LogError($"Error getting company orders: {ex.Message}");
+                throw new Exception($"Error getting company orders: {ex.Message}");
             }
         }
     }

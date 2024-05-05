@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Order } from "src/app/models/order.model";
 
 @Component({
@@ -10,13 +10,10 @@ import { Order } from "src/app/models/order.model";
     styleUrls: ['./order.component.scss']
 })
 
-export class OrderComponent implements OnInit {
+export class OrderComponent  {
 
     @Input() order: Order | undefined;
 
     constructor() { }
 
-    ngOnInit(): void {
-        
-    }
 }

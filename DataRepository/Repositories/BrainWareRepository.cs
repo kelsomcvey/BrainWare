@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
-
-
-
+using Microsoft.Extensions.Logging;
 
 namespace DataRepository.Repositories
 {
     public class BrainWareRepository : IBrainWareRepository
     {
-        private readonly string _connectionString;      
-
+        private readonly string _connectionString;
+       
 
         public BrainWareRepository(string connectionString)
         {
@@ -25,8 +18,8 @@ namespace DataRepository.Repositories
                 throw new InvalidOperationException("Connection string cannot be null or empty.");
             }
             _connectionString = connectionString;
+          
         }
-
 
         public async Task<IEnumerable<T>> ExecuteStoredProcedure<T>(string storedProcedure, object parameters)
         {
@@ -36,6 +29,7 @@ namespace DataRepository.Repositories
             {
                 if (connection == null)
                 {
+                   
                     throw new InvalidOperationException("Connection is not available in DataRepository.");
                 }
 
@@ -46,17 +40,12 @@ namespace DataRepository.Repositories
                 }
                 catch (Exception ex)
                 {
-                    // Log the exception details (consider using a logger)
-                    Console.WriteLine($"Error executing stored procedure: {ex.Message}");
-
-                    // Re-throw or handle the exception as needed
+                 
                     throw new DataException("An error occurred while executing the stored procedure.", ex);
                 }
             }
 
             return results;
         }
-
     }
-
 }

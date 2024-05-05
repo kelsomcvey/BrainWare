@@ -1,9 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { OrdersService } from './services/orders.service';
-import { Order } from './models/order.model';
 import { OrdersComponent } from './components/orders/orders.component';
 
 @Component({
@@ -14,7 +10,7 @@ import { OrdersComponent } from './components/orders/orders.component';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  orders: Order[] = [];
+ 
   year = new Date().getFullYear();
   title = "web-app";
 

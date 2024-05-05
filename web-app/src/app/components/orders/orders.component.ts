@@ -25,13 +25,11 @@ export class OrdersComponent implements OnInit {
     companyDisplayName: string = "";
     loading: boolean = true;
 
-    constructor(private orderService: OrdersService) {
-    }
+    constructor(private orderService: OrdersService) {}
 
     ngOnInit(): void {
         this.loadCompaniesAndOrders();
     }
-
 
     // get list of companies with orders from the API
     // then for the 1st company returned get the orders
@@ -49,9 +47,10 @@ export class OrdersComponent implements OnInit {
             }),
             catchError(error => {
                 this.loading = false;
-                alert('Error fetching company orders');
+                console.log(error);
+                alert(error);
 
-                return throwError(() => new Error('Error fetching company orders'));
+               return throwError(() => new Error(error));
             })
         );
     }
@@ -63,12 +62,11 @@ export class OrdersComponent implements OnInit {
             catchError(error => {
                 // console.error('Error fetching orders:', error);
                 this.loading = false;
-                alert('Error fetching orders for company');
-                return throwError(() => new Error('test'));
+                alert(error);
+                return throwError(() => new Error(error));
             })
         );
     }
-
 
     // when the dropdown selection is changed get orders for the selected companyId
     onCompanySelected(): void {
@@ -86,11 +84,8 @@ export class OrdersComponent implements OnInit {
         return this.companies$.pipe(
             map(companies => {
                 const foundCompany = companies.find(company => company.companyId == companyId);
-
                 return foundCompany ? foundCompany.companyName : 'Unknown Company';
             })
         );
     }
-
-
 }

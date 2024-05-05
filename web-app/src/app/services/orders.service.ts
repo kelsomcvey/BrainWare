@@ -33,7 +33,7 @@ export class OrdersService implements IOrdersService {
         return orders;
       }), catchError(error => {
         //console.error('Error fetching orders:', error);
-        return throwError(() => new Error('test'));
+        return throwError(() => 'Error fetching orders');
       })
     );
   }
@@ -51,9 +51,10 @@ export class OrdersService implements IOrdersService {
         });
         return companies;
       }), catchError(error => {
-        // console.error('Error fetching companies with orders:', error);
-        return throwError(() => new Error('Error fetching companies'));
-      }));
+    
+        return throwError(() => 'Error fetching companies');
+      })
+    );
   }
 
 

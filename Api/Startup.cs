@@ -20,7 +20,6 @@ namespace Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -30,7 +29,7 @@ namespace Api
                 var configuration = provider.GetService<IConfiguration>();
                 if (configuration == null)
                 {
-                    logger.LogError("Configuration service  string is null");
+                    logger.LogError("Configuration service is null");
                     throw new InvalidOperationException("Configuration service is null.");
                 }
 
@@ -69,12 +68,19 @@ namespace Api
                 services.AddEndpointsApiExplorer();
                 services.AddSwaggerGen(c =>
                 {
-                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" }); // Replace with your API details
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BrainWare Api", Version = "v1" }); // Replace with your API details
                 });
+                logger.LogInformation("Running in development mode.");
             }
+            else
+            {
+                logger.LogInformation("Running in production mode.");
+            }
+
+            logger.LogInformation("Services configured successfully.");
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -90,8 +96,7 @@ namespace Api
            
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors("AllowedHosts");
-          //  app.UseAuthorization();
+            app.UseCors("AllowedHosts");         
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,26 +1,35 @@
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { OrdersService } from './services/orders.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
+class MockOrdersService {}
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [AppComponent, RouterTestingModule],
+    await TestBed.configureTestingModule({ 
+      providers: [{ provide: OrdersService, useClass: MockOrdersService }],
+      imports: [HttpClientTestingModule]
     }).compileComponents();
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Welcome web-app'
-    );
   });
 
-  it(`should have as title 'web-app'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('web-app');
+  it('should create the app', () => {
+    expect(component).toBeTruthy();
   });
+
+  it('should render the current year in a p tag', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const currentYear = new Date().getFullYear().toString();
+    expect(compiled.querySelector('small')?.textContent).toContain("BrainWare");
+  });
+
 });

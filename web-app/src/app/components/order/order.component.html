@@ -1,10 +1,23 @@
 <div class="order-item">
-    <p class="order-name"> {{order?.description}}  <b>(Total: {{order?.orderTotal | currency:'GBP':'symbol':'1.2-2'}})</b></p>
-   
+
+    <div class="order-item-top ">
+        <p class="order-name"> {{order?.description}} </p>
+    </div>
+
+
     <ul>
-    <p class="products-title">Products ordered</p>
+        <p class="products-title">Products</p>
         <li *ngFor="let orderProduct of order?.orderProducts" class="product-item">
-            {{orderProduct.productName}} ({{orderProduct.quantity}} &#64; {{orderProduct.price | currency:'GBP':'symbol':'1.2-2'}}/ea)
+            {{orderProduct.productName}} ({{orderProduct.quantity}} &#64; {{orderProduct.price |
+            currency:'GBP':'symbol':'1.2-2'}}/ea)
         </li>
     </ul>
+
+    <div class="order-item-footer">
+
+        <p class="displayTotal">
+            <b>Total: {{order?.orderTotal | currency:'GBP':'symbol':'1.2-2'}}</b>
+        </p>
+
+    </div>
 </div>
