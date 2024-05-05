@@ -1,8 +1,6 @@
 ﻿namespace Api.Controllers
 {
-    using Api.Infrastructure.Services;
-    using DataRepository.Repositories;
-    using Infrastructure;
+  using Api.Infrastructure.Services; 
   using Microsoft.AspNetCore.Mvc;
   using Models;
 
@@ -46,4 +44,4 @@
         }
     }
 }
-}
+

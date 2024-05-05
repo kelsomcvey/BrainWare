@@ -1,17 +1,8 @@
-<!-- <li>
-    {{order?.description}} (Total: ${{order?.orderTotal}})
-    <ul>
-        <li *ngFor="let orderProduct of order?.orderProducts">
-            {{orderProduct.productName}} ({{orderProduct.quantity}} &#64; ${{orderProduct.price}}/ea)
-        </li>
-    </ul>
-</li> -->
-
 <div class="order-item">
-    <p> {{order?.description}}  <b>(Total: {{order?.orderTotal | currency:'GBP':'symbol':'1.2-2'}})</b></p>
+    <p class="order-name"> {{order?.description}}  <b>(Total: {{order?.orderTotal | currency:'GBP':'symbol':'1.2-2'}})</b></p>
    
     <ul>
-    <p>Products ordered</p>
+    <p class="products-title">Products ordered</p>
         <li *ngFor="let orderProduct of order?.orderProducts" class="product-item">
             {{orderProduct.productName}} ({{orderProduct.quantity}} &#64; {{orderProduct.price | currency:'GBP':'symbol':'1.2-2'}}/ea)
         </li>

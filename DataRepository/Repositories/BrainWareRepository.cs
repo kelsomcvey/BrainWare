@@ -15,12 +15,16 @@ namespace DataRepository.Repositories
 {
     public class BrainWareRepository : IBrainWareRepository
     {
-        private readonly string _connectionString; // Replace with your actual connection string       
+        private readonly string _connectionString;      
 
 
         public BrainWareRepository(string connectionString)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException("null db connection string");
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new InvalidOperationException("Connection string cannot be null or empty.");
+            }
+            _connectionString = connectionString;
         }
 
 

@@ -6,13 +6,14 @@ import { IOrdersService } from './i-orders.service';
 import { Order } from '../models/order.model';
 import { OrderProduct } from '../models/orderProduct.model';
 import { Company } from '../models/company.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdersService implements IOrdersService {
-  private apiUrl: string = 'https://localhost:44347/api/order/'; // Replace with your actual API URL
+  private apiUrl: string = environment.apiUrl + 'order/';
 
   constructor(private http: HttpClient) { }
 
@@ -30,8 +31,8 @@ export class OrdersService implements IOrdersService {
           orders.push(newOrder);
         });
         return orders;
-      }),      catchError(error => {
-        console.error('Error fetching orders:', error);
+      }), catchError(error => {
+        //console.error('Error fetching orders:', error);
         return throwError(() => new Error('test'));
       })
     );
@@ -44,15 +45,17 @@ export class OrdersService implements IOrdersService {
       map((resp: any) => {
         const companies: Company[] = [];
         resp.forEach((c: any) => {
-          
+
           const company = new Company(c.companyId, c.companyName);
           companies.push(company);
         });
         return companies;
-      })
-    );
+      }), catchError(error => {
+        // console.error('Error fetching companies with orders:', error);
+        return throwError(() => new Error('Error fetching companies'));
+      }));
   }
-  
+
 
   private getHttpOptions(): any {
     return new HttpHeaders({

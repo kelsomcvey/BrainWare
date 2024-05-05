@@ -23,20 +23,21 @@
 <bw-app-loader *ngIf="this.loading"></bw-app-loader>
 
 
-
-<div class="orders-container">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>{{ companyDisplayName }} Orders</h3>
+<ng-container *ngIf="orders$ | async as orders">
+    <div class="orders-container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>{{ companyDisplayName }} Orders</h3>
+            </div>
         </div>
-    </div>
 
-    <ng-container *ngIf="orders$ | async as orders">
+
         <div class="orders-list">
             <div *ngFor="let order of orders">
 
                 <bw-app-order [order]="order"></bw-app-order>
             </div>
         </div>
-    </ng-container>
-</div>
+
+    </div>
+</ng-container>

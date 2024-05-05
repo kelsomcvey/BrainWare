@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 
 
 @Component({
@@ -10,13 +10,4 @@ import { Component, OnInit } from "@angular/core";
     styleUrls: ['./loader.component.scss']
 })
 
-export class LoaderComponent implements OnInit {
-
-   
-
-    constructor() { }
-
-    ngOnInit(): void {
-        
-    }
-}
+export class LoaderComponent  {}

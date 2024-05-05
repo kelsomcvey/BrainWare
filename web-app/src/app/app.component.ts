@@ -16,7 +16,7 @@ import { OrdersComponent } from './components/orders/orders.component';
 export class AppComponent implements OnInit {
   orders: Order[] = [];
   year = new Date().getFullYear();
-
+  title = "web-app";
 
   constructor() {
   }

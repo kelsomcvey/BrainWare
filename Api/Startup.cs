@@ -10,11 +10,12 @@ namespace Api
     public class Startup
     {
         private bool runProd = false;
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        private readonly ILogger<Startup> logger;
+        public Startup(IConfiguration configuration, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             Configuration = configuration;
             runProd = env.IsProduction();
-
+            this.logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -24,30 +25,42 @@ namespace Api
         {
             services.AddControllers();
 
-
-
-           // var connectionString = Configuration.GetConnectionString("BrainWareDb");
             services.AddScoped<IBrainWareRepository, BrainWareRepository>(provider =>
             {
                 var configuration = provider.GetService<IConfiguration>();
+                if (configuration == null)
+                {
+                    logger.LogError("Configuration service  string is null");
+                    throw new InvalidOperationException("Configuration service is null.");
+                }
+
                 var connectionString = configuration.GetConnectionString("BrainWareDb");
+                if (connectionString == null)
+                {
+                    logger.LogError("Connection string is null");
+                    throw new InvalidOperationException("Connection string is null");
+                }
+
                 return new BrainWareRepository(connectionString);
             });
-
-            //services.AddScoped<IBrainWareRepository, BrainWareRepository>(provider =>
-            //{
-            //    return new BrainWareRepository(connectionString);
-            //});
 
             services.AddScoped<IOrderService, OrderService>();
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAngular", builder =>
+                options.AddPolicy("AllowedHosts", builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200") // Replace with your Angular origin
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                    var allowedHosts = Configuration.GetSection("AllowedHosts")?.Get<string[]>();
+                    if (allowedHosts != null && allowedHosts.Length > 0)
+                    {
+                        builder.WithOrigins(allowedHosts)
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    }
+                    else
+                    {
+                        logger.LogError("Allowed hosts not found");
+                    }
                 });
             });
             // Add Swagger for API documentation (optional)
@@ -74,10 +87,10 @@ namespace Api
             }
 
             // Use HTTPS redirection for production environments (optional)
-            // app.UseHttpsRedirection();
+           
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors("AllowAngular");
+            app.UseCors("AllowedHosts");
           //  app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

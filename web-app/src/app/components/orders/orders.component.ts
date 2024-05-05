@@ -18,9 +18,9 @@ import { LoaderComponent } from "../loader/loader.component";
 })
 
 export class OrdersComponent implements OnInit {
+    
     orders$!: Observable<Order[]>;
     companies$!: Observable<Company[]>;
-    companies: Company[] = [];
     selectedCompanyId: number = 1;
     companyDisplayName: string = "";
     loading: boolean = true;
@@ -30,59 +30,67 @@ export class OrdersComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadCompaniesAndOrders();
-      }
-    
-      loadCompaniesAndOrders(): void {
+    }
+
+
+    // get list of companies with orders from the API
+    // then for the 1st company returned get the orders
+    loadCompaniesAndOrders(): void {
         this.loading = true;
         this.companies$ = this.orderService.getCompanies().pipe(
-          tap(companies => {
-            if (companies.length > 0) {
-              const firstCompanyId = companies[0].companyId;
-              this.companyDisplayName = companies[0].companyName;
-              this.getOrders(firstCompanyId);
-            } else {
-              throw new Error('No companies found.');
-            }
-          }),
-          catchError(error => {
-            console.error('Error fetching companies:', error);
-            this.loading = false;
-            return throwError(() => new Error('test'));
-          })
+            tap(companies => {
+                if (companies.length > 0) {
+                    const firstCompanyId = companies[0].companyId;
+                    this.companyDisplayName = companies[0].companyName;
+                    this.getOrders(firstCompanyId);
+                } else {
+                    alert('No orders found. Please try again later.');
+                }
+            }),
+            catchError(error => {
+                this.loading = false;
+                alert('Error fetching company orders');
+
+                return throwError(() => new Error('Error fetching company orders'));
+            })
         );
-      }
-    
-      getOrders(companyId: number): void {
+    }
+
+    // get orders from companyId
+    getOrders(companyId: number): void {
         this.orders$ = this.orderService.getOrders(companyId).pipe(
-          tap(() => this.loading = false),
-          catchError(error => {
-            console.error('Error fetching orders:', error);
-            this.loading = false;
-            return throwError(() => new Error('test'));
-          })
+            tap(() => this.loading = false),
+            catchError(error => {
+                // console.error('Error fetching orders:', error);
+                this.loading = false;
+                alert('Error fetching orders for company');
+                return throwError(() => new Error('test'));
+            })
         );
-      }
-    
-      onCompanySelected(): void {
+    }
+
+
+    // when the dropdown selection is changed get orders for the selected companyId
+    onCompanySelected(): void {
         this.loading = true;
-       
-    
-        this.getOrders(this.selectedCompanyId); 
+
+        this.getOrders(this.selectedCompanyId);
+
         this.getCompanyNameById(this.selectedCompanyId).subscribe(companyName => {
-          this.companyDisplayName = companyName;
+            this.companyDisplayName = companyName;
         });
-      }
-      
-    
-      getCompanyNameById(companyId: number): Observable<string> {
+    }
+
+    // get the name of the company from the companyId
+    getCompanyNameById(companyId: number): Observable<string> {
         return this.companies$.pipe(
-          map(companies => {
-            const foundCompany = companies.find(company => company.companyId == companyId);
-           // this.companyDisplayName = foundCompany ? foundCompany.companyName : 'Unknown Company';
-            return foundCompany ? foundCompany.companyName : 'Unknown Company';
-          })
+            map(companies => {
+                const foundCompany = companies.find(company => company.companyId == companyId);
+
+                return foundCompany ? foundCompany.companyName : 'Unknown Company';
+            })
         );
-      }
+    }
 
 
 }
